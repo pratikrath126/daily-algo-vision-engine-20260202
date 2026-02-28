@@ -121,6 +121,26 @@ function setupEventListeners() {
             document.getElementById('gridSizeSelect').click();
         });
     }
+
+    const helpBtn = document.getElementById('helpBtn');
+    if (helpBtn) {
+        helpBtn.addEventListener('click', () => {
+            alert('AlgoVision Engine Instructions:\n\n1. Select an algorithm and a maze from the dropdowns.\n2. Click and drag on the grid to add walls.\n3. Drag the Start (Green) and Target (Red) nodes to move them.\n4. Click Visualize to see the algorithm in action.\n5. Use the zoom (+/-) buttons to resize the grid view.');
+        });
+    }
+
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+    }
 }
 
 function clearBoard() {
