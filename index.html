@@ -1,36 +1,172 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlgoVision Engine</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AlgoVision Engine Dashboard v2.0.0</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .grid-mesh {
+            background-size: 24px 24px;
+            background-image: radial-gradient(circle, #282e39 1px, transparent 1px);
+        }
+        .glow-primary {
+            box-shadow: 0 0 15px rgba(19, 91, 236, 0.4);
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <div class="brand">
-            <h1>AlgoVision Engine</h1>
-            <span class="badge">v1.0.0</span>
-        </div>
-        <nav>
-            <button id="visualizeBtn" class="btn-primary">Visualize Algorithm</button>
-            <button id="clearBtn" class="btn-secondary">Clear Board</button>
-        </nav>
-    </header>
-
-    <div class="legend">
-        <div class="legend-item"><div class="node-icon start"></div>Start Node</div>
-        <div class="legend-item"><div class="node-icon end"></div>Target Node</div>
-        <div class="legend-item"><div class="node-icon wall"></div>Wall</div>
-        <div class="legend-item"><div class="node-icon visited"></div>Visited</div>
-        <div class="legend-item"><div class="node-icon path"></div>Shortest Path</div>
-    </div>
-
-    <div class="main-container">
-        <div id="grid-container"></div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col overflow-hidden">
+<header class="border-b border-slate-200 dark:border-slate-800 bg-white/5 dark:bg-slate-900/50 backdrop-blur-md px-6 py-3 flex items-center justify-between z-50">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="bg-primary p-1.5 rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-2xl">insights</span>
+</div>
+<div>
+<h1 class="text-lg font-bold tracking-tight">AlgoVision Engine</h1>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-bold uppercase tracking-wider">v2.0.0</span>
+</div>
+</div>
+<div class="h-8 w-px bg-slate-200 dark:border-slate-800 mx-2"></div>
+<nav class="flex items-center gap-2">
+<div class="relative group">
+<select id="algoSelect" class="bg-transparent appearance-none flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-sm font-medium cursor-pointer focus:outline-none dark:bg-slate-900">
+<option value="dijkstra">Dijkstra's Algorithm</option>
+<option value="aStar">A* Search</option>
+<option value="bfs">Breadth-First Search</option>
+<option value="dfs">Depth-First Search</option>
+<option value="greedy">Greedy Best-First</option>
+<option value="bidirectionalBfs">Bidirectional BFS</option>
+<option value="bidirectionalAStar">Bidirectional A*</option>
+<option value="bidirectionalGreedy">Bidirectional Greedy</option>
+<option value="swarm">Swarm Algorithm</option>
+<option value="convergentSwarm">Convergent Swarm</option>
+</select>
+</div>
+<div class="relative group">
+<select id="mazeSelect" class="bg-transparent appearance-none flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-sm font-medium cursor-pointer focus:outline-none dark:bg-slate-900">
+<option value="">Select Maze</option>
+<option value="recursiveDivision">Recursive Division</option>
+<option value="randomMaze">Random Basic Maze</option>
+<option value="randomWeight">Random Weight Maze</option>
+<option value="horizontalSkew">Horizontal Skew</option>
+<option value="verticalSkew">Vertical Skew</option>
+</select>
+</div>
+</nav>
+</div>
+<div class="flex items-center gap-3">
+<button id="clearPathBtn" class="px-4 py-2 text-sm font-medium hover:text-primary transition-colors">Clear Path</button>
+<button id="clearBtn" class="px-4 py-2 text-sm font-medium hover:text-primary transition-colors">Clear Board</button>
+<button id="visualizeBtn" class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold text-sm glow-primary transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">play_arrow</span>
+                Visualize
+            </button>
+<div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-300 dark:border-slate-700 ml-2">
+<img alt="User Profile" data-alt="User profile avatar circle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDErCQFuPHhnY4rCb7U9KFhbHYcGsYSNmPSXku7p6e94LSd07qIGYOM0yTJTWmiO-A3s0JtvHxUH1u-q0j9RGoPy7daXi3w0YYzdaOkrie3cb2nC6VJmpkDwMCRxtzeCKcMPtiMdduhH4ENWqd-2xNuvxPiBnzTT-aZ-V4wk4I6SdiCLUVc9M6P9j45oXLZclQL1LodCGevjWm4lvUOJMnzHZ5tihtu7DqN64mnxTHUWBmt58xWIN9slzfNEaeQg6ryoXQHVSLW8vf1"/>
+</div>
+</div>
+</header>
+<div class="bg-white/5 dark:bg-slate-900/30 border-b border-slate-200 dark:border-slate-800 px-6 py-2 flex items-center gap-6 overflow-x-auto no-scrollbar">
+<div class="flex items-center gap-2 shrink-0">
+<div class="size-4 rounded bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Start Node</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="size-4 rounded bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Target Node</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="size-4 rounded bg-slate-400 dark:bg-slate-600"></div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Wall Node</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="size-4 rounded bg-gradient-to-br from-primary to-purple-500"></div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Visited Node</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="size-4 rounded bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Path Node</span>
+</div>
+<div class="flex-grow"></div>
+<div class="flex items-center gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">speed</span> Speed: Fast</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">grid_view</span> Size: 50x25</span>
+</div>
+</div>
+<main class="flex-grow p-6 relative flex flex-col">
+<div class="flex-grow bg-white dark:bg-[#0d121c] rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden flex flex-col">
+<div class="absolute inset-0 grid-mesh opacity-20 pointer-events-none"></div>
+<div class="relative flex-grow p-4">
+<div id="grid-container" class="w-full h-full grid grid-cols-[repeat(50,1fr)] grid-rows-[repeat(25,1fr)] gap-[1px] bg-slate-200 dark:bg-slate-800/50 rounded overflow-hidden border border-slate-200 dark:border-slate-800"></div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between">
+<div class="flex items-center gap-6">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Selected Algorithm</span>
+<span id="selectedAlgoDisplay" class="text-sm font-semibold text-primary">Dijkstra's Algorithm</span>
+</div>
+<div class="w-px h-8 bg-slate-200 dark:bg-slate-800"></div>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Distance</span>
+<span id="distanceDisplay" class="text-sm font-semibold">--</span>
+</div>
+<div class="w-px h-8 bg-slate-200 dark:bg-slate-800"></div>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Nodes Visited</span>
+<span id="nodesVisitedDisplay" class="text-sm font-semibold">0</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors">
+<span class="material-symbols-outlined">fullscreen</span>
+</button>
+</div>
+</div>
+</div>
+<div class="absolute bottom-10 right-10 flex flex-col gap-2">
+<button class="size-12 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="size-12 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+</main>
+<footer class="px-6 py-2 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex items-center justify-between">
+<p class="text-[10px] text-slate-500 font-medium">AlgoVision Engine is an open-source tool for computer science education.</p>
+<div class="flex items-center gap-4">
+<a class="text-[10px] text-slate-500 hover:text-primary transition-colors font-medium" href="#">Documentation</a>
+<a class="text-[10px] text-slate-500 hover:text-primary transition-colors font-medium" href="#">GitHub Repo</a>
+<a class="text-[10px] text-slate-500 hover:text-primary transition-colors font-medium" href="#">API Reference</a>
+</div>
+</footer>
+<script src="script.js"></script>
+</body></html>
