@@ -17,6 +17,6 @@ AlgoVision Engine is a high-performance web application designed to visualize co
 • State Management: Robust handling of grid states, resetting, and algorithm execution flows.
 
 ## Tech Stack
-- HTML5, CSS3, Vanilla JavaScript
-- Deployment: Vercel
+- HTML5, CSS3, Vanilla JavaScript.
+- Deployment: Vercel.
   
