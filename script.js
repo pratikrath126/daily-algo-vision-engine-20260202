@@ -21,6 +21,10 @@ function initializeGrid() {
     const gridContainer = document.getElementById('grid-container');
     gridContainer.style.gridTemplateColumns = `repeat(${COLS}, minmax(0, 1fr))`;
     gridContainer.style.gridTemplateRows = `repeat(${ROWS}, minmax(0, 1fr))`;
+    gridContainer.style.aspectRatio = `${COLS} / ${ROWS}`;
+    gridContainer.style.height = '100%';
+    gridContainer.style.aspectRatio = `${COLS} / ${ROWS}`;
+    gridContainer.style.height = '100%';
     gridContainer.innerHTML = '';
     grid = [];
 
@@ -37,7 +41,7 @@ function initializeGrid() {
             const nodeElement = document.createElement('div');
             nodeElement.id = nodeId;
             // Removed transition-colors to make dragging faster/more responsive
-            nodeElement.className = 'w-6 h-6 bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer flex-shrink-0';
+            nodeElement.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer';
             
             if (row === START_NODE.row && col === START_NODE.col) {
                 nodeElement.classList.add('node-start');
@@ -162,13 +166,13 @@ function clearPath() {
             node.distance = Infinity;
             node.previousNode = null;
             if (!node.isStart && !node.isEnd && !node.isWall) {
-                element.className = 'w-6 h-6 bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer flex-shrink-0';
+                element.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer transition-colors';
             } else if (node.isStart) {
-                element.className = 'w-6 h-6 bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer flex-shrink-0 node-start';
+                element.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer transition-colors node-start';
             } else if (node.isEnd) {
-                element.className = 'w-6 h-6 bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer flex-shrink-0 node-end';
+                element.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer transition-colors node-end';
             } else if (node.isWall) {
-                element.className = 'w-6 h-6 bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer flex-shrink-0 node-wall';
+                element.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer transition-colors node-wall';
             }
         }
     }

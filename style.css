@@ -64,3 +64,5 @@
         transform: scale(1);
     }
 }
+
+#grid-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
