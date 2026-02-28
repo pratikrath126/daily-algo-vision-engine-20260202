@@ -119,8 +119,8 @@
 <main class="flex-grow p-6 relative flex flex-col">
 <div class="flex-grow bg-white dark:bg-[#0d121c] rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden flex flex-col">
 <div class="absolute inset-0 grid-mesh opacity-20 pointer-events-none"></div>
-<div class="relative flex-grow p-4">
-<div id="grid-container" class="w-full h-full grid  gap-[1px] bg-slate-200 dark:bg-slate-800/50 rounded overflow-hidden border border-slate-200 dark:border-slate-800"></div>
+<div class="relative flex-grow p-4 overflow-auto" id="grid-wrapper">
+<div id="grid-container" class="grid gap-[1px] bg-slate-200 dark:bg-slate-800/50 rounded border border-slate-200 dark:border-slate-800 w-max h-max mx-auto my-auto origin-center transition-transform duration-200"></div>
 </div>
 <div class="bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between">
 <div class="flex items-center gap-6">
@@ -140,7 +140,7 @@
 </div>
 </div>
 <div class="flex items-center gap-2">
-<button class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors">
+<button id="settingsBtn" class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors">
 <span class="material-symbols-outlined">settings</span>
 </button>
 <button class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors">
@@ -153,10 +153,10 @@
 </div>
 </div>
 <div class="absolute bottom-10 right-10 flex flex-col gap-2">
-<button class="size-12 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+<button id="zoomInBtn" class="size-12 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
 <span class="material-symbols-outlined">add</span>
 </button>
-<button class="size-12 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+<button id="zoomOutBtn" class="size-12 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
 <span class="material-symbols-outlined">remove</span>
 </button>
 </div>
