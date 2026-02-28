@@ -1,7 +1,10 @@
-const ROWS = 25;
-const COLS = 50;
+let ROWS = 25;
+let COLS = 50;
 let grid = [];
 let isMousePressed = false;
+let isDraggingStartNode = false;
+let isDraggingEndNode = false;
+
 let START_NODE = { row: 12, col: 10 };
 let END_NODE = { row: 12, col: 39 };
 let isRunning = false;
@@ -15,9 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initializeGrid() {
     const gridContainer = document.getElementById('grid-container');
-    // We already have a grid set via tailwind classes in index.html, but let's clear and rebuild dynamically
+    gridContainer.style.gridTemplateColumns = `repeat(${COLS}, minmax(0, 1fr))`;
+    gridContainer.style.gridTemplateRows = `repeat(${ROWS}, minmax(0, 1fr))`;
     gridContainer.innerHTML = '';
     grid = [];
+
+    // Reset start/end nodes if they are out of bounds
+    if (START_NODE.row >= ROWS) START_NODE.row = ROWS - 1;
+    if (START_NODE.col >= COLS) START_NODE.col = COLS - 1;
+    if (END_NODE.row >= ROWS) END_NODE.row = ROWS - 1;
+    if (END_NODE.col >= COLS) END_NODE.col = COLS - 1;
 
     for (let row = 0; row < ROWS; row++) {
         const currentRow = [];
@@ -25,19 +35,23 @@ function initializeGrid() {
             const nodeId = `node-${row}-${col}`;
             const nodeElement = document.createElement('div');
             nodeElement.id = nodeId;
-            nodeElement.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center transition-colors';
+            // Removed transition-colors to make dragging faster/more responsive
+            nodeElement.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer';
             
             if (row === START_NODE.row && col === START_NODE.col) {
                 nodeElement.classList.add('node-start');
-                // nodeElement.innerHTML = '<div class="size-4 rounded bg-emerald-500 shadow-lg"></div>';
             } else if (row === END_NODE.row && col === END_NODE.col) {
                 nodeElement.classList.add('node-end');
-                // nodeElement.innerHTML = '<div class="size-4 rounded bg-rose-500 shadow-lg"></div>';
             }
 
-            nodeElement.onmousedown = () => handleMouseDown(row, col);
+            nodeElement.onmousedown = (e) => {
+                e.preventDefault();
+                handleMouseDown(row, col);
+            };
             nodeElement.onmouseenter = () => handleMouseEnter(row, col);
             nodeElement.onmouseup = () => handleMouseUp();
+            // Prevent default drag and drop API taking over
+            nodeElement.ondragstart = () => false;
 
             gridContainer.appendChild(nodeElement);
             currentRow.push({
@@ -53,6 +67,9 @@ function initializeGrid() {
         }
         grid.push(currentRow);
     }
+
+    // Global mouseup to catch releases outside the grid
+    document.body.onmouseup = () => handleMouseUp();
 }
 
 function setupEventListeners() {
@@ -71,6 +88,13 @@ function setupEventListeners() {
         if(selectedMaze) {
             generateMaze(selectedMaze);
         }
+    });
+    document.getElementById('gridSizeSelect').addEventListener('change', (e) => {
+        if(isRunning) return;
+        const [w, h] = e.target.value.split('x');
+        COLS = parseInt(w);
+        ROWS = parseInt(h);
+        initializeGrid();
     });
 }
 
@@ -107,17 +131,37 @@ function clearPath() {
 
 function handleMouseDown(row, col) {
     if (isRunning) return;
-    toggleWall(row, col);
+    const node = grid[row][col];
+    if (node.isStart) {
+        isDraggingStartNode = true;
+    } else if (node.isEnd) {
+        isDraggingEndNode = true;
+    } else {
+        toggleWall(row, col);
+    }
     isMousePressed = true;
 }
 
 function handleMouseEnter(row, col) {
     if (!isMousePressed || isRunning) return;
-    toggleWall(row, col);
+    const node = grid[row][col];
+    if (isDraggingStartNode) {
+        if (!node.isEnd && !node.isWall) {
+            updateStartNode(row, col);
+        }
+    } else if (isDraggingEndNode) {
+        if (!node.isStart && !node.isWall) {
+            updateEndNode(row, col);
+        }
+    } else {
+        toggleWall(row, col);
+    }
 }
 
 function handleMouseUp() {
     isMousePressed = false;
+    isDraggingStartNode = false;
+    isDraggingEndNode = false;
 }
 
 function toggleWall(row, col) {
@@ -131,6 +175,28 @@ function toggleWall(row, col) {
     } else {
         element.classList.remove('node-wall');
     }
+}
+
+function updateStartNode(row, col) {
+    const oldElement = document.getElementById(`node-${START_NODE.row}-${START_NODE.col}`);
+    oldElement.classList.remove('node-start');
+    grid[START_NODE.row][START_NODE.col].isStart = false;
+
+    START_NODE = {row, col};
+    const newElement = document.getElementById(`node-${row}-${col}`);
+    newElement.classList.add('node-start');
+    grid[row][col].isStart = true;
+}
+
+function updateEndNode(row, col) {
+    const oldElement = document.getElementById(`node-${END_NODE.row}-${END_NODE.col}`);
+    oldElement.classList.remove('node-end');
+    grid[END_NODE.row][END_NODE.col].isEnd = false;
+
+    END_NODE = {row, col};
+    const newElement = document.getElementById(`node-${row}-${col}`);
+    newElement.classList.add('node-end');
+    grid[row][col].isEnd = true;
 }
 
 function getUnvisitedNeighbors(node, grid) {
@@ -208,7 +274,7 @@ function visualizeAlgorithm() {
     } else {
         nodesInShortestPathOrder = getNodesInShortestPathOrder(endNode);
     }
-    
+
     if (nodesInShortestPathOrder.length === 1 && nodesInShortestPathOrder[0] === endNode && endNode.previousNode === null) {
         nodesInShortestPathOrder = [];
     }
