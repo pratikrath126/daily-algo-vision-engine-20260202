@@ -10,6 +10,7 @@ let END_NODE = { row: 12, col: 39 };
 let isRunning = false;
 let selectedAlgo = 'dijkstra';
 let selectedMaze = '';
+let currentZoom = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeGrid();
@@ -36,7 +37,7 @@ function initializeGrid() {
             const nodeElement = document.createElement('div');
             nodeElement.id = nodeId;
             // Removed transition-colors to make dragging faster/more responsive
-            nodeElement.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer';
+            nodeElement.className = 'w-6 h-6 bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer flex-shrink-0';
             
             if (row === START_NODE.row && col === START_NODE.col) {
                 nodeElement.classList.add('node-start');
@@ -96,6 +97,30 @@ function setupEventListeners() {
         ROWS = parseInt(h);
         initializeGrid();
     });
+
+    document.getElementById('zoomInBtn').addEventListener('click', () => {
+        const gridContainer = document.getElementById('grid-container');
+        if (currentZoom < 2.5) {
+            currentZoom += 0.25;
+            gridContainer.style.transform = `scale(${currentZoom})`;
+        }
+    });
+
+    document.getElementById('zoomOutBtn').addEventListener('click', () => {
+        const gridContainer = document.getElementById('grid-container');
+        if (currentZoom > 0.5) {
+            currentZoom -= 0.25;
+            gridContainer.style.transform = `scale(${currentZoom})`;
+        }
+    });
+
+    const settingsBtn = document.getElementById('settingsBtn');
+    if(settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+            document.getElementById('gridSizeSelect').focus();
+            document.getElementById('gridSizeSelect').click();
+        });
+    }
 }
 
 function clearBoard() {
@@ -117,13 +142,13 @@ function clearPath() {
             node.distance = Infinity;
             node.previousNode = null;
             if (!node.isStart && !node.isEnd && !node.isWall) {
-                element.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center transition-colors';
+                element.className = 'w-6 h-6 bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer flex-shrink-0';
             } else if (node.isStart) {
-                element.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center transition-colors node-start';
+                element.className = 'w-6 h-6 bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer flex-shrink-0 node-start';
             } else if (node.isEnd) {
-                element.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center transition-colors node-end';
+                element.className = 'w-6 h-6 bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer flex-shrink-0 node-end';
             } else if (node.isWall) {
-                element.className = 'w-full h-full bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center transition-colors node-wall';
+                element.className = 'w-6 h-6 bg-white dark:bg-background-dark border border-slate-100 dark:border-slate-800/20 flex items-center justify-center cursor-pointer flex-shrink-0 node-wall';
             }
         }
     }
